@@ -1,3 +1,5 @@
+package com;
+
 import com.bot.CoinBot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

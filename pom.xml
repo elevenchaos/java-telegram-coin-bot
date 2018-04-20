@@ -110,7 +110,7 @@
 
                 <configuration> <!--设置程序执行的主类-->
 
-                    <mainClass>CoinApplication</mainClass>
+                    <mainClass>com.CoinApplication</mainClass>
 
                 </configuration>
 
