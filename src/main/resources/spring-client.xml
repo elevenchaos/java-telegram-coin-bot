@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ssdev="http://www.ngarihealth.com/schema/ssdev"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.ngarihealth.com/schema/ssdev
+	http://www.ngarihealth.com/schema/ssdev/ssdev.xsd">
+    <ssdev:applicationDomain name="demo"/><!-- 相当于域名  -->
+    <ssdev:connector url="tcp://0.0.0.0:6001?codec=hessian"/>
+    <bean id="remoteUrls" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <!--<value>tcp://121.43.182.18:20315?codec=hessian</value>-->
+                <value>tcp://121.43.169.166:9015?codec=hessian</value>
+                <value>tcp://121.43.169.205:9015?codec=hessian</value>
+                <!--<value>tcp://121.43.182.18:9215?codec=hessian</value>-->
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <ssdev:reference interface="com.ngari.platform.appoint.service.IAppointPlatformService"
+                     id="his.appointPlatformService">
+        <ssdev:remote ref="remoteUrls"/>
+    </ssdev:reference>
+
+    <bean id="hisAppointService" class="com.ngari.service.HISAppointService"/>
+    <ssdev:service id="appointGetService" ref="hisAppointService"></ssdev:service>
+
+</beans>
