@@ -34,6 +34,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -104,7 +110,7 @@
 
                 <configuration> <!--设置程序执行的主类-->
 
-                    <mainClass>com.CoinApplication</mainClass>
+                    <mainClass>CoinApplication</mainClass>
 
                 </configuration>
 

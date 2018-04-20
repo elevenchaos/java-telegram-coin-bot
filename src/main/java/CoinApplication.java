@@ -1,5 +1,3 @@
-package com;
-
 import com.bot.CoinBot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,8 +16,6 @@ public class CoinApplication {
     public String index(){
         return "Hello Spring boot :)";
     }
-
-
 	public static void main(String[] args) {
 		SpringApplication.run(CoinApplication.class, args);
         ApiContextInitializer.init();
@@ -29,7 +25,5 @@ public class CoinApplication {
         }catch (TelegramApiException e){
             e.printStackTrace();
         }
-//        IAppointPlatformService service = AppDomainContext.getBean("his.appointPlatformService",IAppointPlatformService.class);
-//        System.out.println(JSONUtils.toString(service.findAll(1000427)));
 	}
 }
