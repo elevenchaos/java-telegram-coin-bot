@@ -1,4 +1,4 @@
-package com.entity;
+package coin.entity;
 
 import lombok.Data;
 

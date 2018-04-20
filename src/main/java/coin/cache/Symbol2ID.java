@@ -1,9 +1,9 @@
-package com.cache;
+package coin.cache;
 
+import coin.config.CoinConfig;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.config.CoinConfig;
-import com.utils.CoinGetUtil;
+import coin.utils.CoinGetUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

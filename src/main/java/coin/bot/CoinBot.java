@@ -1,9 +1,9 @@
-package com.bot;
+package coin.bot;
 
-import com.entity.Response;
-import com.service.DealCommand;
+import coin.CoinContext;
+import coin.entity.Response;
+import coin.service.DealCommand;
 import ctd.util.JSONUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -13,10 +13,9 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
  */
 public class CoinBot extends TelegramLongPollingBot {
 
-    @Autowired
-    DealCommand dealCommand;
     @Override
     public void onUpdateReceived(Update update) {
+        DealCommand dealCommand = (DealCommand) CoinContext.getBean("dealCommand");
         String command = update.getMessage().getText();
         System.out.println(" the message is :" + JSONUtils.toString(update));
         Response response = null;

@@ -1,4 +1,4 @@
-package com.utils;
+package coin.utils;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;

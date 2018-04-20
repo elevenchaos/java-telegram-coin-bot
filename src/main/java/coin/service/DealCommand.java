@@ -1,16 +1,16 @@
-package com.service;
+package coin.service;
 
-import com.cache.Symbol2ID;
-import com.commons.Const;
-import com.entity.CoinEntity;
-import com.entity.Response;
+import coin.cache.Symbol2ID;
+import coin.entity.CoinEntity;
+import coin.commons.Const;
+import coin.entity.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by Robin Wang  on 2018-4-20.
  */
-@Service
+@Service("dealCommand")
 public class DealCommand {
     @Autowired
     GetCoinPriceService coinService;
@@ -49,5 +49,9 @@ public class DealCommand {
             response.setMsg("undefined command,check your command plz.");
         }
         return response;
+    }
+
+    public String test(){
+        return "test dahd";
     }
 }
