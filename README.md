@@ -1,1 +1,0 @@
-# java-telegram-coin-bot
