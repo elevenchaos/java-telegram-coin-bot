@@ -1,4 +1,4 @@
-package coin.commons;
+package com.commons;
 
 /**
  * Created by Robin Wang  on 2018-4-20.

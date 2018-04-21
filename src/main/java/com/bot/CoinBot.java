@@ -1,8 +1,8 @@
-package coin.bot;
+package com.bot;
 
-import coin.CoinContext;
-import coin.entity.Response;
-import coin.service.DealCommand;
+import com.CoinContext;
+import com.entity.Response;
+import com.service.DealCommand;
 import ctd.util.JSONUtils;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
@@ -21,9 +21,7 @@ public class CoinBot extends TelegramLongPollingBot {
         Response response = null;
         String messgae = null;
         if (command != null) response = dealCommand.commandHandle(command);
-        if (response.isSuccess()){
-            messgae = (String)response.getData();
-        }
+        messgae = response.isSuccess()?(String) response.getData():response.getMsg();
         SendMessage sender = new SendMessage().setChatId(update.getMessage().getChatId())
                 .setText(messgae);
         try {
@@ -32,6 +30,7 @@ public class CoinBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
+
     @Override
     public String getBotUsername() {
         return "ruby_coin_bot";

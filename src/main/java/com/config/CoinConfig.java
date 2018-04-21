@@ -1,4 +1,4 @@
-package coin.config;
+package com.config;
 
         import lombok.Data;
         import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,5 +11,5 @@ package coin.config;
 @ConfigurationProperties("coin.properties")
 @Data
 public class CoinConfig {
-    private String coin_api_url = "https://api.coinmarketcap.com/v1/";
+    private String coin_api_url = "https://api.coinmarketcap.com/v1/ticker/";
 }
