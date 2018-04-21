@@ -1,4 +1,4 @@
-package coin;
+package com;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

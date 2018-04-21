@@ -1,4 +1,4 @@
-package coin.entity;
+package com.entity;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
  * Created by Robin Wang  on 2018/4/20.
  */
 @Data
-public class CoinEntity {
+public class CoinEntity{
     private String id;
     private String name;
     private String symbol;
@@ -21,4 +21,5 @@ public class CoinEntity {
     private String percent_change_24h;
     private String percent_change_7d;
     private String last_updated;
+
 }
