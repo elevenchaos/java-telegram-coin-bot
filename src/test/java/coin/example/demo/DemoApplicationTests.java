@@ -1,6 +1,6 @@
-package com.example.demo;
+package coin.example.demo;
 
-import com.service.GetCoinPriceService;
+import coin.service.GetCoinPriceService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class DemoApplicationTests {
 	@Autowired
-	GetCoinPriceService price;
+    GetCoinPriceService price;
 	@Test
 	public void contextLoads() {
 	}
