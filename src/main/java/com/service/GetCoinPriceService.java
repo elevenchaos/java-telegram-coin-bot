@@ -91,6 +91,7 @@ public class GetCoinPriceService {
 
     public Response getTopCoinsByPrice(Integer top_num) {
         String url = coinConfig.getCoin_api_url();
+        if (top_num == null)top_num=DEFAULT_TOP_NUM;
         String res = CoinGetUtil.get(url);
         List<CoinEntity> list = new ArrayList<>();
         Response response = new Response();

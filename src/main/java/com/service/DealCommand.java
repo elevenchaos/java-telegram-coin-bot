@@ -5,11 +5,13 @@ import com.commons.Const;
 import com.entity.CoinEntity;
 import com.entity.Response;
 import com.utils.CoinGetUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.regex.Pattern;
 
 /**
  * Created by Robin Wang  on 2018-4-20.
@@ -63,11 +65,44 @@ public class DealCommand {
     }
 
     private Response topHandle(String command) {
-//        Response topRes = coinService.getTopCoinsByRank(command);
-//        if (topRes.isSuccess()) {
-//
-//        }
-        return null;
+        Response response = new Response();
+        if(isNumeric(command)){
+            StringBuilder builder = new StringBuilder();
+            builder.append("近期涨跌总览:\n");
+            Response hRes = coinService.getTopCoinsByWave(StringUtils.isEmpty(command)?null:Integer.parseInt(command),"h");
+            Response dRes =  coinService.getTopCoinsByWave(StringUtils.isEmpty(command)?null:Integer.parseInt(command),"d");
+            Response wRes = coinService.getTopCoinsByWave(StringUtils.isEmpty(command)?null:Integer.parseInt(command),"w");
+            if (hRes.isSuccess()) {
+                builder.append(hRes.getData());
+                builder.append("-------");
+            }
+            if (dRes.isSuccess()){
+                builder.append(dRes.getData());
+                builder.append("-------");
+            }
+            if (wRes.isSuccess()){
+                builder.append(wRes.getData());
+                builder.append("-------");
+            }
+            response.setCode("200");
+            response.setData(builder.toString());
+        }else if (command.contains("h")){
+            command = command.replace("h","");
+            response = coinService.getTopCoinsByWave(StringUtils.isEmpty(command)?null:Integer.parseInt(command),"h");
+        }else if (command.contains("d")){
+            command = command.replace("d","");
+            response = coinService.getTopCoinsByWave(StringUtils.isEmpty(command)?null:Integer.parseInt(command),"d");
+        }else if (command.contains("w")){
+            command = command.replace("w","");
+            response = coinService.getTopCoinsByWave(StringUtils.isEmpty(command)?null:Integer.parseInt(command),"w");
+        }else if (command.contains("p")){
+            command = command.replace("p","");
+            response = coinService.getTopCoinsByPrice(StringUtils.isEmpty(command)?null:Integer.parseInt(command));
+        }
+        return response;
     }
-
+    private boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
 }
