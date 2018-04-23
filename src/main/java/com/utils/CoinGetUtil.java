@@ -43,8 +43,13 @@ public class CoinGetUtil {
 
 
     public BigDecimal getRate(String source, String target) {
-        long time = (Long.parseLong(rateCache.get("rateTime").toString()) - System.currentTimeMillis()) / 1000;
-        boolean overdue = rateCache != null && time > 3600;
+        boolean overdue;
+        if (rateCache == null){
+            overdue = true;
+        }else {
+            long time = (Long.parseLong(rateCache.get("rateTime").toString()) - System.currentTimeMillis()) / 1000;
+            overdue = time > 3600;
+        }
         if (overdue) {
             String rateUrl = "http://api.k780.com/?app=finance.rate&scur=" + source + "&tcur=" + target + "&appkey=33040&sign=487ff10ad28d8e4737fd887ae0400619";
             String rateRes = CoinGetUtil.get(rateUrl);
@@ -63,14 +68,5 @@ public class CoinGetUtil {
         }
         return null;
     }
-
-    public static void main(String[] args) throws Exception {
-//        System.out.println(System.currentTimeMillis()/1000);
-//        Thread.sleep(5000);
-//        System.out.println(System.currentTimeMillis()/1000);
-        BigDecimal decimal = new BigDecimal(System.currentTimeMillis() / 1000);
-        System.out.println(decimal.toString());
-    }
-
 
 }

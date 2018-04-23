@@ -8,14 +8,12 @@ import com.config.CoinConfig;
 import com.entity.CoinEntity;
 import com.entity.Response;
 import com.utils.CoinGetUtil;
+import ctd.util.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -132,34 +130,34 @@ public class GetCoinPriceService {
         if (CoinGetUtil.isAPISuccess(res)) {
             JSONArray coinArray = JSONArray.parseArray(res);
             for (int i = 0; i < coinArray.size(); i++) {
-                CoinEntity entity = JSONObject.parseObject(coinArray.getJSONArray(i).toString(), CoinEntity.class);
+                CoinEntity entity = JSONObject.parseObject(coinArray.getJSONObject(i).toString(), CoinEntity.class);
                 list.add(entity);
             }
             StringBuilder builder = new StringBuilder();
             if ("hour".equalsIgnoreCase(time_range) || "h".equalsIgnoreCase(time_range)) {
                 sortByWave(list, "h", "up");
                 builder.append("近一小时涨幅前" + top_num + "名:\n");
-                pickResponse(list, builder, top_num);
+                pickResponse(list, builder, top_num,"h");
                 builder.append("--------\n");
                 builder.append("近一小时跌幅前" + top_num + "名:\n");
                 sortByWave(list, "h", "down");
-                pickResponse(list, builder, top_num);
+                pickResponse(list, builder, top_num,"h");
             } else if ("day".equalsIgnoreCase(time_range) || "d".equalsIgnoreCase(time_range)) {
                 sortByWave(list, "d", "up");
                 builder.append("近一天涨幅前" + top_num + "名:\n");
-                pickResponse(list, builder, top_num);
+                pickResponse(list, builder, top_num,"d");
                 builder.append("--------\n");
                 builder.append("近一天跌幅前" + top_num + "名:\n");
                 sortByWave(list, "d", "down");
-                pickResponse(list, builder, top_num);
+                pickResponse(list, builder, top_num,"d");
             } else if ("week".equalsIgnoreCase(time_range) || "w".equalsIgnoreCase(time_range)) {
                 sortByWave(list, "w", "up");
                 builder.append("近一周涨幅前" + top_num + "名:\n");
-                pickResponse(list, builder, top_num);
+                pickResponse(list, builder, top_num,"w");
                 builder.append("--------\n");
                 builder.append("近一周跌幅前" + top_num + "名:\n");
                 sortByWave(list, "w", "down");
-                pickResponse(list, builder, top_num);
+                pickResponse(list, builder, top_num,"w");
             } else {
                 response.setCode(Const.NORMAL_FAIL);
                 response.setMsg("the time range is undefined,try h or d or w again.");
@@ -176,7 +174,7 @@ public class GetCoinPriceService {
 
     }
 
-    private List<CoinEntity> sortByWave(List<CoinEntity> list, String type, String trade) {
+    public static List<CoinEntity> sortByWave(List<CoinEntity> list, String type, String trade) {
         if (type.equals("h")) {
             Collections.sort(list, new Comparator<CoinEntity>() {
                 @Override
@@ -204,12 +202,26 @@ public class GetCoinPriceService {
         return list;
     }
 
-    private StringBuilder pickResponse(List<CoinEntity> list, StringBuilder builder, Integer top_num) {
+    private void pickResponse(List<CoinEntity> list, StringBuilder builder, Integer top_num,String type) {
         Integer index = top_num > list.size() ? list.size() : top_num;
         for (int i = 0; i < index; i++) {
             CoinEntity item = list.get(i);
-            builder.append(item.getSymbol() + "-->" + item.getPercent_change_1h() + "%\n");
+            builder.append(item.getSymbol() + " ---> " + (type.equals("h")?item.getPercent_change_1h():type.equals("d")?item.getPercent_change_24h():item.getPercent_change_7d()) + "%\n");
         }
-        return builder;
+    }
+
+    public static void main(String[] args) {
+        List<CoinEntity> list = new ArrayList<>();
+        CoinEntity entity1 = new CoinEntity();
+        entity1.setPercent_change_1h("0.01");
+        CoinEntity entity2 = new CoinEntity();
+        entity2.setPercent_change_1h("0.02");
+        CoinEntity entity3 = new CoinEntity();
+        entity3.setPercent_change_1h("-22.03");
+        list.add(entity2);
+        list.add(entity1);
+        list.add(entity3);
+        sortByWave(list,"h","down");
+        System.out.println(JSONUtils.toString(list));
     }
 }

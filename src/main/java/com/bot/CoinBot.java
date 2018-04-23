@@ -2,7 +2,7 @@ package com.bot;
 
 import com.CoinContext;
 import com.entity.Response;
-import com.service.DealCommand;
+import com.service.CommandHandlerService;
 import ctd.util.JSONUtils;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
@@ -15,7 +15,7 @@ public class CoinBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        DealCommand dealCommand = (DealCommand) CoinContext.getBean("dealCommand");
+        CommandHandlerService dealCommand = (CommandHandlerService) CoinContext.getBean("dealCommand");
         String command = update.getMessage().getText();
         System.out.println(" the message is :" + JSONUtils.toString(update));
         Response response = null;

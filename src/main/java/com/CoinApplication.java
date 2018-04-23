@@ -11,9 +11,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 @SpringBootApplication
 @RestController
 public class CoinApplication {
-
 	public static void main(String[] args) {
-	    SpringApplication.run(CoinApplication.class, args);
+        SpringApplication.run(CoinApplication.class, args);
         ApiContextInitializer.init();
         TelegramBotsApi api = new TelegramBotsApi();
         try {
