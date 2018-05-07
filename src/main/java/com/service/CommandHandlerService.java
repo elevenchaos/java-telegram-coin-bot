@@ -104,7 +104,7 @@ public class CommandHandlerService {
     }
 
     public static void main(String[] args) {
-        String test = " 10";
+        String test = "";
         System.out.println(CommandMacher.isNumeric(test));
     }
 

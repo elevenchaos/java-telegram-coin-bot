@@ -8,6 +8,8 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,11 +30,13 @@ public class CoinGetUtil {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         try {
+            System.out.println("send : " + url);
             Response response = client.newCall(request).execute();
             result = response.body().string();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("res : " + result);
         return result;
     }
 
@@ -44,9 +48,9 @@ public class CoinGetUtil {
 
     public BigDecimal getRate(String source, String target) {
         boolean overdue;
-        if (rateCache == null){
+        if (rateCache == null) {
             overdue = true;
-        }else {
+        } else {
             long time = (Long.parseLong(rateCache.get("rateTime").toString()) - System.currentTimeMillis()) / 1000;
             overdue = time > 3600;
         }
@@ -63,10 +67,20 @@ public class CoinGetUtil {
                 rateCache.put("rate", bigDecimalRate);
                 return bigDecimalRate;
             }
-        }else {
+        } else {
             return rateCache.get("rate");
         }
         return null;
     }
 
+    public static void main(String[] args) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.now();
+        System.out.println(formatter.format(localDateTime));
+
+        String str = "2008年08月23日 23:59:59";
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss");
+        LocalDateTime localDateTime2 = LocalDateTime.parse(str, formatter2);
+        System.out.println(localDateTime2);
+    }
 }

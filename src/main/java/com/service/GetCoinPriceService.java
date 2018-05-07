@@ -13,8 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * 获取币值
@@ -23,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @Slf4j
 public class GetCoinPriceService {
-    private static ConcurrentHashMap coinCache = new ConcurrentHashMap(2000);
     private static Integer DEFAULT_TOP_NUM = 10;
     @Autowired
     CoinConfig coinConfig;
@@ -73,14 +74,10 @@ public class GetCoinPriceService {
     public Response getAllCoinInfos() {
         String url = coinConfig.getCoin_api_url();
         String res = CoinGetUtil.get(url);
-        List<CoinEntity> list = new ArrayList<>();
+        List<CoinEntity> list = null;
         Response response = new Response();
         if (CoinGetUtil.isAPISuccess(res)) {
-            JSONArray coinArray = JSONArray.parseArray(res);
-            for (int i = 0; i < coinArray.size(); i++) {
-                CoinEntity entity = JSONObject.parseObject(coinArray.getJSONArray(i).toString(), CoinEntity.class);
-                list.add(entity);
-            }
+            list = getCoinEntity(res);
         }
         if (list.size() > 0) response.setCode("200");
         response.setData(list);
@@ -89,16 +86,12 @@ public class GetCoinPriceService {
 
     public Response getTopCoinsByPrice(Integer top_num) {
         String url = coinConfig.getCoin_api_url();
-        if (top_num == null)top_num=DEFAULT_TOP_NUM;
+        if (top_num == null) top_num = DEFAULT_TOP_NUM;
         String res = CoinGetUtil.get(url);
-        List<CoinEntity> list = new ArrayList<>();
+        List<CoinEntity> list = null;
         Response response = new Response();
         if (CoinGetUtil.isAPISuccess(res)) {
-            JSONArray coinArray = JSONArray.parseArray(res);
-            for (int i = 0; i < coinArray.size(); i++) {
-                CoinEntity entity = JSONObject.parseObject(coinArray.getJSONArray(i).toString(), CoinEntity.class);
-                list.add(entity);
-            }
+            list = getCoinEntity(res);
             Collections.sort(list, new Comparator<CoinEntity>() {
                 @Override
                 public int compare(CoinEntity o1, CoinEntity o2) {
@@ -110,54 +103,61 @@ public class GetCoinPriceService {
             Integer index = list.size() > top_num ? top_num : list.size();
             for (int i = 0; i < index; i++) {
                 CoinEntity item = list.get(i);
-                builder.append(item.getSymbol()+"-->"+item.getPrice_usd()+"\n");
+                builder.append(item.getSymbol() + "-->" + item.getPrice_usd() + "\n");
             }
             response.setCode(Const.SUCCEES);
             response.setData(builder.toString());
-        }else {
+        } else {
             response.setMsg("未获取到有效数据");
             response.setCode(Const.NORMAL_FAIL);
         }
         return response;
     }
 
+    private List<CoinEntity>getCoinEntity(String res){
+        List<CoinEntity> list = new ArrayList();
+        JSONArray coinArray = JSONArray.parseArray(res);
+        for (int i = 0; i < coinArray.size(); i++) {
+            CoinEntity entity = JSONObject.parseObject(coinArray.getJSONObject(i).toString(), CoinEntity.class);
+            if (entity.getPercent_change_1h() == null || entity.getPercent_change_24h() == null || entity.getPercent_change_7d() == null)continue;
+            list.add(entity);
+        }
+        return list;
+    }
     public Response getTopCoinsByWave(Integer top_num, String time_range) {
         if (top_num == null) top_num = DEFAULT_TOP_NUM;
         String url = coinConfig.getCoin_api_url();
         String res = CoinGetUtil.get(url);
-        List<CoinEntity> list = new ArrayList<>();
+        List<CoinEntity> list;
         Response response = new Response();
         if (CoinGetUtil.isAPISuccess(res)) {
-            JSONArray coinArray = JSONArray.parseArray(res);
-            for (int i = 0; i < coinArray.size(); i++) {
-                CoinEntity entity = JSONObject.parseObject(coinArray.getJSONObject(i).toString(), CoinEntity.class);
-                list.add(entity);
-            }
+            list = getCoinEntity(res);
             StringBuilder builder = new StringBuilder();
             if ("hour".equalsIgnoreCase(time_range) || "h".equalsIgnoreCase(time_range)) {
+                System.out.println("list is:" + JSONUtils.toString(list));
                 sortByWave(list, "h", "up");
                 builder.append("近一小时涨幅前" + top_num + "名:\n");
-                pickResponse(list, builder, top_num,"h");
+                pickResponse(list, builder, top_num, "h");
                 builder.append("--------\n");
                 builder.append("近一小时跌幅前" + top_num + "名:\n");
                 sortByWave(list, "h", "down");
-                pickResponse(list, builder, top_num,"h");
+                pickResponse(list, builder, top_num, "h");
             } else if ("day".equalsIgnoreCase(time_range) || "d".equalsIgnoreCase(time_range)) {
                 sortByWave(list, "d", "up");
                 builder.append("近一天涨幅前" + top_num + "名:\n");
-                pickResponse(list, builder, top_num,"d");
+                pickResponse(list, builder, top_num, "d");
                 builder.append("--------\n");
                 builder.append("近一天跌幅前" + top_num + "名:\n");
                 sortByWave(list, "d", "down");
-                pickResponse(list, builder, top_num,"d");
+                pickResponse(list, builder, top_num, "d");
             } else if ("week".equalsIgnoreCase(time_range) || "w".equalsIgnoreCase(time_range)) {
                 sortByWave(list, "w", "up");
                 builder.append("近一周涨幅前" + top_num + "名:\n");
-                pickResponse(list, builder, top_num,"w");
+                pickResponse(list, builder, top_num, "w");
                 builder.append("--------\n");
                 builder.append("近一周跌幅前" + top_num + "名:\n");
                 sortByWave(list, "w", "down");
-                pickResponse(list, builder, top_num,"w");
+                pickResponse(list, builder, top_num, "w");
             } else {
                 response.setCode(Const.NORMAL_FAIL);
                 response.setMsg("the time range is undefined,try h or d or w again.");
@@ -202,11 +202,11 @@ public class GetCoinPriceService {
         return list;
     }
 
-    private void pickResponse(List<CoinEntity> list, StringBuilder builder, Integer top_num,String type) {
+    private void pickResponse(List<CoinEntity> list, StringBuilder builder, Integer top_num, String type) {
         Integer index = top_num > list.size() ? list.size() : top_num;
         for (int i = 0; i < index; i++) {
             CoinEntity item = list.get(i);
-            builder.append(item.getSymbol() + " ---> " + (type.equals("h")?item.getPercent_change_1h():type.equals("d")?item.getPercent_change_24h():item.getPercent_change_7d()) + "%\n");
+            builder.append(item.getSymbol() + " ---> " + (type.equals("h") ? item.getPercent_change_1h() : type.equals("d") ? item.getPercent_change_24h() : item.getPercent_change_7d()) + "%\n");
         }
     }
 
@@ -221,7 +221,7 @@ public class GetCoinPriceService {
         list.add(entity2);
         list.add(entity1);
         list.add(entity3);
-        sortByWave(list,"h","down");
+        sortByWave(list, "h", "down");
         System.out.println(JSONUtils.toString(list));
     }
 }
